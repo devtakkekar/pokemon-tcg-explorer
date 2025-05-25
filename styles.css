@@ -1,0 +1,446 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #545454;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #280f81;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+h1 {
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    color: rgb(255, 0, 0);
+}
+
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    gap: 1rem;
+}
+
+.currency-selector {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: white;
+    font-size: 1rem;
+}
+
+.currency-selector select {
+    padding: 0.3rem;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+/* Styles for the search button with star animation - User Provided Exact Code */
+button {
+    position: relative;
+    padding: 12px 35px;
+    background: #3a3a3a;
+    font-size: 17px;
+    font-weight: 500;
+    color: #e0e0e0;
+    border: 3px solid #585858;
+    border-radius: 8px;
+    box-shadow: 0 0 0 #ffffff8c;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.star-1 {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    width: 25px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #fffdef);
+    z-index: -5;
+    transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96);
+}
+
+.star-2 {
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    width: 15px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #fffdef);
+    z-index: -5;
+    transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
+}
+
+.star-3 {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    width: 5px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #fffdef);
+    z-index: -5;
+    transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
+}
+
+.star-4 {
+    position: absolute;
+    top: 20%;
+    left: 40%;
+    width: 8px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #fffdef);
+    z-index: -5;
+    transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
+}
+
+.star-5 {
+    position: absolute;
+    top: 25%;
+    left: 45%;
+    width: 15px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #fffdef);
+    z-index: -5;
+    transition: all 0.6s cubic-bezier(0, 0.4, 0, 1.01);
+}
+
+.star-6 {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    width: 5px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #fffdef);
+    z-index: -5;
+    transition: all 0.8s ease;
+}
+
+button:hover {
+    background: transparent;
+    color: #ffffff;
+    box-shadow: 0 0 25px #ffffff8c;
+}
+
+button:hover .star-1 {
+    position: absolute;
+    top: -80%;
+    left: -30%;
+    width: 25px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+button:hover .star-2 {
+    position: absolute;
+    top: -25%;
+    left: 10%;
+    width: 15px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+button:hover .star-3 {
+    position: absolute;
+    top: 55%;
+    left: 25%;
+    width: 5px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+button:hover .star-4 {
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    width: 8px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+button:hover .star-5 {
+    position: absolute;
+    top: 25%;
+    left: 115%;
+    width: 15px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+button:hover .star-6 {
+    position: absolute;
+    top: 5%;
+    left: 60%;
+    width: 5px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.fil0 {
+    fill: #fffdef;
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: center;
+    background-color: #282828;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    color: #e0e0e0;
+}
+
+select {
+    padding: 0.5rem;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.card {
+    background-color: #282828;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+    cursor: pointer;
+    color: #e0e0e0;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    background-color: #3a3a3a;
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.card-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.card-price {
+    color: #bbb;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.card-rarity {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #ccc;
+    margin-top: auto;
+}
+
+.rarity-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.3rem;
+    stroke: currentColor;
+    fill: none;
+}
+
+.rarity-common .rarity-icon {
+    color: #a0a0a0;
+}
+
+.rarity-uncommon .rarity-icon {
+    color: #8acaff;
+}
+
+.rarity-rare .rarity-icon {
+    color: #ffff00;
+    filter: drop-shadow(0 0 3px #ffff00);
+}
+
+.rarity-rareholo .rarity-icon,
+.rarity-rarehologx .rarity-icon,
+.rarity-rareholov .rarity-icon,
+.rarity-rareholovmax .rarity-icon,
+.rarity-rareholovstar .rarity-icon {
+    color: #00ffff;
+    filter: drop-shadow(0 0 4px #00ffff);
+}
+
+.rarity-ultrarare .rarity-icon {
+    color: #ff00ff;
+    filter: drop-shadow(0 0 5px #ff00ff);
+}
+
+.rarity-hyperrare .rarity-icon,
+.rarity-rarerainbow .rarity-icon,
+.rarity-raresecret .rarity-icon,
+.rarity-rareultra .rarity-icon {
+    color: #ff4500;
+    filter: drop-shadow(0 0 6px #ff4500);
+}
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #555;
+    border-top: 5px solid #e0e0e0;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: background-color 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.modal.visible {
+    background-color: rgba(0,0,0,0.85);
+    pointer-events: auto;
+}
+
+.modal-image {
+    max-width: 95%;
+    max-height: 95vh;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transform: scale(0.5);
+    opacity: 0;
+}
+
+.modal.visible .modal-image {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 90%;
+    width: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-content img {
+    max-width: 100%;
+    max-height: 80vh;
+    height: auto;
+    display: block;
+    margin: 0 auto 1rem;
+    object-fit: contain;
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: #e0e0e0;
+}
+
+.modal-content p {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: #e0e0e0;
+}
+
+@media (max-width: 768px) {
+    .search-container {
+        flex-direction: column;
+    }
+    
+    .filters {
+        flex-direction: column;
+    }
+    
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+    }
+} 
