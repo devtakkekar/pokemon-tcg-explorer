@@ -22,6 +22,8 @@ const modalCardImage = document.getElementById('modalCardImage'); // Get the ima
 const currencyDropdown = document.getElementById('currencyDropdown'); // Get the currency dropdown
 const sortByRarityButton = document.getElementById('sortByRarityButton'); // Get the sort by rarity button
 const sortByPriceButton = document.getElementById('sortByPriceButton'); // Get the sort by price button
+const resetFiltersButton = document.getElementById('resetFiltersButton'); // Get the reset filters button
+const excludeMissingCheckbox = document.getElementById('excludeMissingCheckbox'); // Get the exclude missing checkbox
 const raritySortArrow = sortByRarityButton.querySelector('.sort-arrow'); // Get the arrow span for rarity
 const priceSortArrow = sortByPriceButton.querySelector('.sort-arrow'); // Get the arrow span for price
 
@@ -31,7 +33,8 @@ let isLoading = false;
 let currentFilters = {
     name: '',
     set: '',
-    type: ''
+    type: '',
+    excludeMissing: false
 };
 
 let exchangeRates = {}; // Object to store exchange rates
@@ -46,16 +49,51 @@ const POKEMON_TCG_TYPES_URL = `${API_BASE_URL}/types`;
 // State for sorting
 let currentSort = { criteria: null, direction: 'asc' }; // { criteria: 'rarity' or 'price', direction: 'asc' or 'desc' }
 
-// Define a basic rarity order (can be adjusted)
+// Define rarity order based on official API
 const rarityOrder = [
-    'Common', 'Uncommon', 'Rare', 'Rare Holo', 'Rare Holo EX', 'Rare Holo GX', 
-    'Rare Holo LV.X', 'Rare Holo Star', 'Rare Holo V', 'Rare Holo VMAX', 
-    'Rare Holo VSTAR', 'Rare Prime', 'Rare Prism Star', 'Rare BREAK', 'Rare ACE', 
-    'Amazing Rare', 'Radiant Rare', 'Trainer Gallery Rare Holo', 'Illustration Rare', 
-    'Special Illustration Rare', 'Double Rare', 'Ultra Rare', 'Shiny Rare', 
-    'Shiny Ultra Rare', 'Rare Ultra', 'Rare Rainbow', 'Rare Secret', 'Classic Collection', 
-    'Promo', 'LEGEND', 'ACE SPEC Rare' // Add more from the API list as needed [https://api.pokemontcg.io/v2/rarities]
+  "Rare Secret",
+  "Rare Rainbow",
+  "Special Illustration Rare",
+  "Illustration Rare",
+  "Rare Shiny GX",
+  "Rare Shiny",
+  "Shiny Ultra Rare",
+  "Shiny Rare",
+  "Rare Ultra",
+  "Ultra Rare",
+  "Rare Holo VSTAR",
+  "Rare Holo VMAX",
+  "Rare Holo V",
+  "Rare Holo GX",
+  "Rare Holo EX",
+  "Rare Holo LV.X",
+  "Rare Holo Star",
+  "Rare Prime",
+  "Rare BREAK",
+  "Rare ACE",
+  "Rare Prism Star",
+  "Rare Shining",
+  "Radiant Rare",
+  "Amazing Rare",
+  "ACE SPEC Rare",
+  "LEGEND",
+  "Trainer Gallery Rare Holo",
+  "Classic Collection",
+  "Promo",
+  "Rare Holo",
+  "Rare",
+  "Double Rare",
+  "Uncommon",
+  "Common"
 ];
+
+// Function to get rarity index for sorting
+function getRarityIndex(rarity) {
+    if (!rarity) return -1; // Return -1 for missing rarities
+    const index = rarityOrder.indexOf(rarity);
+    // Put unknown rarities at the end
+    return index === -1 ? rarityOrder.length : index;
+}
 
 // Event Listeners
 searchButton.addEventListener('click', () => {
@@ -163,6 +201,44 @@ sortByPriceButton.addEventListener('click', () => {
     fetchCards(); // Fetch cards with new sort order
 });
 
+// Add Event Listener for Exclude Missing Checkbox
+excludeMissingCheckbox.addEventListener('change', () => {
+    currentFilters.excludeMissing = excludeMissingCheckbox.checked;
+    currentPage = 1;
+    currentCardsData = [];
+    fetchCards();
+});
+
+// Add Event Listener for Reset Filters Button
+resetFiltersButton.addEventListener('click', () => {
+    // Reset all filters
+    currentFilters = {
+        name: '',
+        set: '',
+        type: '',
+        excludeMissing: false
+    };
+    
+    // Reset search input
+    searchInput.value = '';
+    
+    // Reset select elements
+    setFilter.value = '';
+    typeFilter.value = '';
+    
+    // Reset checkbox
+    excludeMissingCheckbox.checked = false;
+    
+    // Reset sort state
+    currentSort = { criteria: null, direction: 'asc' };
+    updateSortArrows(null);
+    
+    // Reset page and fetch cards
+    currentPage = 1;
+    currentCardsData = [];
+    fetchCards();
+});
+
 // Function to update sort arrow display
 function updateSortArrows(activeSortCriteria) {
     // Reset all arrows first
@@ -190,7 +266,9 @@ async function fetchCards() {
     loadingSpinner.classList.remove('hidden');
     
     try {
-        let url = `${API_BASE_URL}/cards?page=${currentPage}&pageSize=20`;
+        // Increase page size for initial load when sorting/filtering
+        const pageSize = (currentPage === 1 && (currentFilters.name || currentFilters.set || currentFilters.type || currentSort.criteria)) ? 250 : 20;
+        let url = `${API_BASE_URL}/cards?page=${currentPage}&pageSize=${pageSize}`;
         
         if (currentFilters.name) {
             // Add wildcard for partial matching (names starting with the input)
@@ -239,19 +317,55 @@ async function fetchCards() {
         const data = await response.json();
         console.log('Cards fetched successfully:', data);
         
+        // Log the total number of cards fetched before any filtering
+        console.log('Total cards fetched in this batch:', data.data.length);
+        
         // Store fetched data
         if (currentPage === 1) {
             currentCardsData = data.data; // Replace data on first page
+            console.log('Initial fetch data:', currentCardsData);
         } else {
-            currentCardsData = currentCardsData.concat(data.data); // Append data on subsequent pages
+            // For infinite scroll, append new data
+            currentCardsData = currentCardsData.concat(data.data);
+            console.log('Appended data:', data.data);
         }
         
-        // Display the fetched cards
-        if (currentPage === 1) {
-             displayCards(currentCardsData); // Display the full data array on first page/sort/filter
-        } else {
-             displayCards(data.data); // Append newly fetched data for infinite scroll
+        // Sort the combined data if sorting is active (apply to both initial load and infinite scroll data)
+        if (currentSort.criteria) {
+            console.log('Applying sort criteria:', currentSort.criteria, 'direction:', currentSort.direction);
+            currentCardsData.sort((a, b) => {
+                if (currentSort.criteria === 'rarity') {
+                    const rarityAIndex = getRarityIndex(a.rarity);
+                    const rarityBIndex = getRarityIndex(b.rarity);
+
+                    if (currentSort.direction === 'asc') {
+                        // Ascending sort: Lowest Rarity (highest index) to Highest Rarity (lowest index)
+                        // Sort by increasing index. If A's index is higher (lower rarity), it should come after B.
+                        // Return positive if A after B (indexA > indexB)
+                        return rarityBIndex - rarityAIndex; // Corrected for ascending
+                    } else {
+                        // Descending sort: Highest Rarity (lowest index) to Lowest Rarity (highest index)
+                        // Sort by decreasing index. If A's index is lower (higher rarity), it should come before B.
+                        // Return negative if A before B (indexA < indexB)
+                        return rarityAIndex - rarityBIndex; // Corrected for descending
+                    }
+                } else if (currentSort.criteria === 'price') {
+                    // Price sorting logic (assuming price is available)
+                    const priceA = a.cardmarket?.prices?.averageSellPrice || 0;
+                    const priceB = b.cardmarket?.prices?.averageSellPrice || 0;
+                    return currentSort.direction === 'asc' ? priceA - priceB : priceB - priceA;
+                } else {
+                    return 0;
+                }
+            });
         }
+        
+        // Log the state of currentCardsData before displaying
+        console.log('currentCardsData before display:', currentCardsData);
+
+        // Display the fetched cards
+        // Display the full currentCardsData array after sorting/filtering
+        displayCards(currentCardsData);
         
         // Update filters if it's the first page
         if (currentPage === 1) {
@@ -267,10 +381,30 @@ async function fetchCards() {
 }
 
 function displayCards(cardsToDisplay) {
-    // Clear the container only if it's the first page (new search, filter, or sort)
-    if (currentPage === 1) {
-         cardsContainer.innerHTML = '';
+    // Log the number of cards passed to displayCards
+    console.log('displayCards called with', cardsToDisplay.length, 'cards');
+
+    // Clear the container before displaying the sorted/filtered list
+    cardsContainer.innerHTML = '';
+
+    // Filter out cards with missing information if the checkbox is checked
+    if (currentFilters.excludeMissing) {
+        const initialCardCount = cardsToDisplay.length;
+        cardsToDisplay = cardsToDisplay.filter(card => {
+            const hasPrice = card.cardmarket?.prices?.averageSellPrice !== undefined;
+            const hasRarity = card.rarity !== undefined;
+            // Log details of cards being excluded
+            if (!hasPrice || !hasRarity) {
+                console.log('Excluding card:', card.name, 'Missing Price:', !hasPrice, 'Missing Rarity:', !hasRarity);
+            }
+            return hasPrice && hasRarity;
+        });
+        // Log the number of cards after filtering
+        console.log('Cards remaining after filtering:', cardsToDisplay.length, 'Excluded:', initialCardCount - cardsToDisplay.length);
     }
+
+    // Sorting is now handled in fetchCards before calling displayCards
+    // The displayCards function just needs to render the provided (already sorted and filtered) list.
 
     cardsToDisplay.forEach(card => {
         const cardElement = createCardElement(card);

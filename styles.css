@@ -226,6 +226,41 @@ select {
     color: #e0e0e0;
 }
 
+#resetFiltersButton {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    border: 3px solid #585858;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#resetFiltersButton:hover {
+    background-color: #4a4a4a;
+    border-color: #686868;
+}
+
+.exclude-missing {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e0e0e0;
+}
+
+.exclude-missing input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #585858;
+}
+
+.exclude-missing label {
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.9rem;
+}
+
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
